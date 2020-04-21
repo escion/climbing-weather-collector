@@ -1,14 +1,12 @@
 package com.escion.climbingweathercollector;
 
-import com.escion.climbingweathercollector.dto.Position;
+import com.escion.climbingweathercollector.dto.common.Position;
 import com.escion.climbingweathercollector.service.UnavailableServiceException;
-import com.escion.climbingweathercollector.service.WeatherService;
 import com.escion.climbingweathercollector.service.impl.OpenWeatherServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 @Slf4j

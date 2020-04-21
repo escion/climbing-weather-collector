@@ -1,4 +1,4 @@
-package com.escion.climbingweathercollector.dto;
+package com.escion.climbingweathercollector.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

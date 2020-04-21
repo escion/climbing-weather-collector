@@ -1,10 +1,11 @@
 package com.escion.climbingweathercollector.service.impl;
 
-import com.escion.climbingweathercollector.dto.Position;
-import com.escion.climbingweathercollector.dto.Weather;
+import com.escion.climbingweathercollector.dto.common.Position;
+import com.escion.climbingweathercollector.dto.report.Weather;
 import com.escion.climbingweathercollector.dto.openweatherapi.Response;
+import com.escion.climbingweathercollector.dto.report.WeatherReport;
 import com.escion.climbingweathercollector.service.UnavailableServiceException;
-import com.escion.climbingweathercollector.service.WeatherService;
+import com.escion.climbingweathercollector.service.WeatherDataService;
 import com.escion.climbingweathercollector.utils.transformer.openweatherapi.WeatherMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +22,7 @@ import java.util.Collection;
 @Slf4j
 @Qualifier("openWeatherService")
 @Service
-public class OpenWeatherServiceImpl implements WeatherService {
+public class OpenWeatherServiceImpl implements WeatherDataService {
 
     @Value("${openweather.forecast.url}")
     String forecastUrl;
@@ -57,13 +58,14 @@ public class OpenWeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Collection<Weather> getForecast(Position position) throws UnavailableServiceException {
+    public WeatherReport getForecast(Position position) throws UnavailableServiceException {
         Assert.notNull(position, "Lat and lon must not be blank");
         ResponseEntity<Response> response = openWeatherTemplate.getForEntity(forecastUrl, Response.class, position.getLat(), position.getLon());
         log.info("Response code: {}", response.getStatusCode());
         if(response.getStatusCode().is2xxSuccessful()){
             //Mapping e restituzione
-            return WeatherMapper.map(response.getBody());
+            return null;
+            //return WeatherMapper.map(response.getBody());
         }
         else if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)){
             throw new UnavailableServiceException("API key expired.");
@@ -76,14 +78,14 @@ public class OpenWeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Collection<Weather> getPastConditions(Position position, String timestamp) throws UnavailableServiceException {
+    public WeatherReport getPastConditions(Position position, String timestamp) throws UnavailableServiceException {
         Assert.notNull(position, "Lat and lon must not be blank");
         Assert.notNull(timestamp, "Timestamp must not be null");
         ResponseEntity<Response> response = openWeatherTemplate.getForEntity(pastUrl, Response.class, position.getLat(), position.getLon(), timestamp);
         log.info("Response code: {}", response.getStatusCode());
         if(response.getStatusCode().is2xxSuccessful()){
             //Mapping e restituzione
-            return WeatherMapper.map(response.getBody());
+            return WeatherMapper.mapPast(response.getBody());
         }
         else if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)){
             throw new UnavailableServiceException("API key expired.");

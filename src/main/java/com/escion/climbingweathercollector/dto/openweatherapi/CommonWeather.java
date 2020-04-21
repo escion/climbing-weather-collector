@@ -17,4 +17,8 @@ public abstract class CommonWeather {
     public Double windSpeed;
     @JsonProperty("wind_deg")
     public Double windDeg;
+    @JsonProperty("rain")
+    public Integer rain;
+    @JsonProperty("snow")
+    public Integer snow;
 }
