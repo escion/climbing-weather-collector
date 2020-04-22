@@ -3,21 +3,22 @@ package com.escion.climbingweathercollector.service.impl;
 import com.escion.climbingweathercollector.dto.common.Position;
 import com.escion.climbingweathercollector.dto.openweatherapi.Response;
 import com.escion.climbingweathercollector.dto.report.WeatherReport;
-import com.escion.climbingweathercollector.service.UnavailableServiceException;
 import com.escion.climbingweathercollector.service.WeatherDataService;
-import com.escion.climbingweathercollector.utils.transformer.openweatherapi.WeatherMapper;
+import com.escion.climbingweathercollector.utils.transformer.openweatherapi.OpenWeatherApiMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @Slf4j
 @Qualifier("openWeatherService")
@@ -53,7 +54,7 @@ public class OpenWeatherServiceImpl implements WeatherDataService {
      */
 
     @Override
-    public Optional<WeatherReport> getForecast(Position position) throws UnavailableServiceException {
+    public Optional<WeatherReport> getForecast(Position position){
         Assert.notNull(position, "Lat and lon must not be blank");
         ResponseEntity<Response> response = openWeatherTemplate.getForEntity(forecastUrl, Response.class, position.getLat(), position.getLon());
         log.info("Response code: {}", response.getStatusCode());
@@ -72,12 +73,12 @@ public class OpenWeatherServiceImpl implements WeatherDataService {
         Assert.hasText(timestamp, "Timestamp must not be null");
         Response response = null;
         try{
-            log.info("Retrieving past weather lat: {} lon: {} timestamp: {}", position.getLat(), position.getLon(), timestamp);
+            log.info("Retrieving past weather lat: {} lon: {} timestamp: {}", position.getLat(), position.getLon(), LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(timestamp)), TimeZone.getDefault().toZoneId()));
             response = openWeatherTemplate.getForObject(pastUrl, Response.class, position.getLat(), position.getLon(), timestamp);
         }
         catch(RestClientException e){
             log.error("Errore retrieving past weather: {}", e.getMessage());
         }
-        return Optional.ofNullable(WeatherMapper.mapPast(response));
+        return Optional.ofNullable(OpenWeatherApiMapper.mapPast(response));
     }
 }

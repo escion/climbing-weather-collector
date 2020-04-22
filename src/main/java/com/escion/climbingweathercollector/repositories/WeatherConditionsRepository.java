@@ -1,6 +1,6 @@
 package com.escion.climbingweathercollector.repositories;
 
-import com.escion.climbingweathercollector.model.WeatherCondition;
+import com.escion.climbingweathercollector.model.cache.WeatherCondition;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

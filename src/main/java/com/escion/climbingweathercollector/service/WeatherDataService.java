@@ -8,6 +8,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface WeatherDataService {
-    Optional<? extends WeatherReport> getForecast(Position position) throws UnavailableServiceException;
-    Optional<? extends WeatherReport> getPastConditions(Position position, String timestamp) throws UnavailableServiceException;
+    Optional<? extends WeatherReport> getForecast(Position position);
+    Optional<? extends WeatherReport> getPastConditions(Position position, String timestamp);
 }

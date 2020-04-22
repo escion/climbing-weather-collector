@@ -1,6 +1,6 @@
 package com.escion.climbingweathercollector.service;
 
-import com.escion.climbingweathercollector.model.WeatherCondition;
+import com.escion.climbingweathercollector.model.cache.WeatherCondition;
 
 import java.util.Optional;
 
