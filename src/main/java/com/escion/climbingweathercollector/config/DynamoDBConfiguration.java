@@ -39,6 +39,7 @@ public class DynamoDBConfiguration {
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(amazonDynamoDBEndpoint, amazonDynamoDBRegion))
                 .build();
     }
+
     @Bean
     public DynamoDB dynamoDB() {
         return new DynamoDB(amazonDynamoDB());

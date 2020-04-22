@@ -1,5 +1,6 @@
 package com.escion.climbingweathercollector.dto.openweatherapi;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class CommonWeather {
@@ -18,7 +19,9 @@ public abstract class CommonWeather {
     @JsonProperty("wind_deg")
     public Double windDeg;
     @JsonProperty("rain")
+    @JsonIgnore
     public Integer rain;
     @JsonProperty("snow")
+    @JsonIgnore
     public Integer snow;
 }

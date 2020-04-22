@@ -1,7 +1,6 @@
 package com.escion.climbingweathercollector.service.impl;
 
 import com.escion.climbingweathercollector.dto.common.Position;
-import com.escion.climbingweathercollector.dto.report.Weather;
 import com.escion.climbingweathercollector.dto.openweatherapi.Response;
 import com.escion.climbingweathercollector.dto.report.WeatherReport;
 import com.escion.climbingweathercollector.service.UnavailableServiceException;
@@ -10,14 +9,15 @@ import com.escion.climbingweathercollector.utils.transformer.openweatherapi.Weat
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 @Qualifier("openWeatherService")
@@ -40,6 +40,7 @@ public class OpenWeatherServiceImpl implements WeatherDataService {
         openWeatherTemplate = new RestTemplate();
     }
 
+    /**
     public void getWeather(Integer id) throws UnavailableServiceException {
         //Assert.notNull(position, "Lat and lon must not be blank");
         ResponseEntity<Response> response = openWeatherTemplate.getForEntity(currentUrl, Response.class, String.valueOf(id));
@@ -47,18 +48,12 @@ public class OpenWeatherServiceImpl implements WeatherDataService {
         if(response.getStatusCode().is2xxSuccessful()){
             //Mapping e restituzione
         }
-        else if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)){
-            throw new UnavailableServiceException("API key expired.");
-        }
-        else if(response.getStatusCode().equals(HttpStatus.TOO_MANY_REQUESTS)){
-            throw new UnavailableServiceException("More than 60 requests in one minute.");
-        }
-        else
-            throw new UnavailableServiceException("Error in calling openWeather service");
+        manageException(response.getStatusCode());
     }
+     */
 
     @Override
-    public WeatherReport getForecast(Position position) throws UnavailableServiceException {
+    public Optional<WeatherReport> getForecast(Position position) throws UnavailableServiceException {
         Assert.notNull(position, "Lat and lon must not be blank");
         ResponseEntity<Response> response = openWeatherTemplate.getForEntity(forecastUrl, Response.class, position.getLat(), position.getLon());
         log.info("Response code: {}", response.getStatusCode());
@@ -67,33 +62,22 @@ public class OpenWeatherServiceImpl implements WeatherDataService {
             return null;
             //return WeatherMapper.map(response.getBody());
         }
-        else if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)){
-            throw new UnavailableServiceException("API key expired.");
-        }
-        else if(response.getStatusCode().equals(HttpStatus.TOO_MANY_REQUESTS)){
-            throw new UnavailableServiceException("More than 60 requests in one minute.");
-        }
-        else
-            throw new UnavailableServiceException("Error in calling openWeather service");
+        return null;
+        //manageException(response.getStatusCode());
     }
 
     @Override
-    public WeatherReport getPastConditions(Position position, String timestamp) throws UnavailableServiceException {
+    public Optional<WeatherReport> getPastConditions(Position position, String timestamp){
         Assert.notNull(position, "Lat and lon must not be blank");
-        Assert.notNull(timestamp, "Timestamp must not be null");
-        ResponseEntity<Response> response = openWeatherTemplate.getForEntity(pastUrl, Response.class, position.getLat(), position.getLon(), timestamp);
-        log.info("Response code: {}", response.getStatusCode());
-        if(response.getStatusCode().is2xxSuccessful()){
-            //Mapping e restituzione
-            return WeatherMapper.mapPast(response.getBody());
+        Assert.hasText(timestamp, "Timestamp must not be null");
+        Response response = null;
+        try{
+            log.info("Retrieving past weather lat: {} lon: {} timestamp: {}", position.getLat(), position.getLon(), timestamp);
+            response = openWeatherTemplate.getForObject(pastUrl, Response.class, position.getLat(), position.getLon(), timestamp);
         }
-        else if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)){
-            throw new UnavailableServiceException("API key expired.");
+        catch(RestClientException e){
+            log.error("Errore retrieving past weather: {}", e.getMessage());
         }
-        else if(response.getStatusCode().equals(HttpStatus.TOO_MANY_REQUESTS)){
-            throw new UnavailableServiceException("More than 60 requests in one minute.");
-        }
-        else
-            throw new UnavailableServiceException("Error in calling openWeather service");
+        return Optional.ofNullable(WeatherMapper.mapPast(response));
     }
 }

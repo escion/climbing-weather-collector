@@ -5,8 +5,9 @@ import com.escion.climbingweathercollector.dto.report.Weather;
 import com.escion.climbingweathercollector.dto.report.WeatherReport;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface WeatherDataService {
-    WeatherReport getForecast(Position position) throws UnavailableServiceException;
-    WeatherReport getPastConditions(Position position, String timestamp) throws UnavailableServiceException;
+    Optional<? extends WeatherReport> getForecast(Position position) throws UnavailableServiceException;
+    Optional<? extends WeatherReport> getPastConditions(Position position, String timestamp) throws UnavailableServiceException;
 }

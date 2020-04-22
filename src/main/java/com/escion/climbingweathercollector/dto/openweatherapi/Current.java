@@ -31,9 +31,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class Current extends CommonWeather{
 
     @JsonProperty("sunrise")
-    public Integer sunrise;
+    public Double sunrise;
     @JsonProperty("sunset")
-    public Integer sunset;
+    public Double sunset;
     @JsonProperty("temp")
     public Double temp;
     @JsonProperty("feels_like")
