@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class Weather {
     Integer timestamp;
+    String period;
     Double temperature;
     Double feelsLikeTemperature;
     Double pressure;

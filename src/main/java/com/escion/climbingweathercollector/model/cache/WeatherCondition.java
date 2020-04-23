@@ -11,4 +11,10 @@ import java.io.Serializable;
 public class WeatherCondition implements Serializable {
     @Id
     String key;
+    String period;
+    Double temperature;
+    Double feelsLikeTemperature;
+    Double humidity;
+    Integer rainVolume;
+    Integer snowVolume;
 }

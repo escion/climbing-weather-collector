@@ -17,12 +17,15 @@ public class DynamoDBConfiguration {
 
     @Value("${amazon.dynamodb.endpoint}")
     private String amazonDynamoDBEndpoint;
+
     @Value("${amazon.dynamodb.region}")
     private String amazonDynamoDBRegion;
+
     @Bean
     public DynamoDBMapperConfig dynamoDBMapperConfig() {
         return DynamoDBMapperConfig.DEFAULT;
     }
+
     @Bean
     public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB, DynamoDBMapperConfig config) {
         return new DynamoDBMapper(amazonDynamoDB, config);

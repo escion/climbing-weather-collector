@@ -1,14 +1,19 @@
 package com.escion.climbingweathercollector.utils.transformer.openweatherapi;
 
+import com.escion.climbingweathercollector.dto.common.Period;
 import com.escion.climbingweathercollector.dto.common.Position;
 import com.escion.climbingweathercollector.dto.openweatherapi.Hourly;
 import com.escion.climbingweathercollector.dto.openweatherapi.Response;
 import com.escion.climbingweathercollector.dto.report.PastReport;
 import com.escion.climbingweathercollector.dto.report.Weather;
 import com.escion.climbingweathercollector.dto.report.WeatherReport;
+import com.escion.climbingweathercollector.utils.DateTimeUtils;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 public class OpenWeatherApiMapper {
@@ -19,17 +24,18 @@ public class OpenWeatherApiMapper {
         PastReport report = new PastReport();
         report.setPosition(new Position(response.lat, response.lon));
         report.setTimezone(response.timezone);
-        report.setPastHourly(mapHourly(response.hourly));
+        report.setPastHourly(mapHourly(response.hourly, response.timezone));
         return report;
     }
 
-    private static Map<Integer, Weather> mapHourly(List<Hourly> hourly){
-        return hourly.stream().map(h -> createWeather(h)).collect(Collectors.toMap(Weather::getTimestamp, weatherCondition -> weatherCondition));
+    private static Map<Integer, Weather> mapHourly(List<Hourly> hourly, String timezone){
+        return hourly.stream().map(h -> createWeather(h, timezone)).collect(Collectors.toMap(Weather::getTimestamp, weatherCondition -> weatherCondition));
     }
 
-    private static Weather createWeather(Hourly hourly){
+    private static Weather createWeather(Hourly hourly, String timezone){
         Weather condition = new Weather();
         condition.setTimestamp(hourly.dt);
+        condition.setPeriod(DateTimeUtils.getPeriodOfDay(hourly.dt, timezone));
         condition.setTemperature(hourly.temp);
         condition.setFeelsLikeTemperature(hourly.feelsLike);
         condition.setPressure(hourly.pressure);
