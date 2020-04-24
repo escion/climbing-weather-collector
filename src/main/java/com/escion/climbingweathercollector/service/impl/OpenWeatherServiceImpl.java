@@ -56,7 +56,7 @@ public class OpenWeatherServiceImpl implements WeatherDataService {
     @Override
     public Optional<WeatherReport> getForecast(Position position){
         Assert.notNull(position, "Lat and lon must not be blank");
-        ResponseEntity<Response> response = openWeatherTemplate.getForEntity(forecastUrl, Response.class, position.getLat(), position.getLon());
+        ResponseEntity<Response> response = openWeatherTemplate.getForEntity(forecastUrl, Response.class, position.getLatitude(), position.getLongitude());
         log.info("Response code: {}", response.getStatusCode());
         if(response.getStatusCode().is2xxSuccessful()){
             //Mapping e restituzione
@@ -73,8 +73,8 @@ public class OpenWeatherServiceImpl implements WeatherDataService {
         Assert.hasText(timestamp, "Timestamp must not be null");
         Response response = null;
         try{
-            log.info("Retrieving past weather lat: {} lon: {} timestamp: {}", position.getLat(), position.getLon(), LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(timestamp)), TimeZone.getDefault().toZoneId()));
-            response = openWeatherTemplate.getForObject(pastUrl, Response.class, position.getLat(), position.getLon(), timestamp);
+            log.info("Retrieving past weather lat: {} lon: {} timestamp: {}", position.getLatitude(), position.getLongitude(), LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(timestamp)), TimeZone.getDefault().toZoneId()));
+            response = openWeatherTemplate.getForObject(pastUrl, Response.class, position.getLatitude(), position.getLongitude(), timestamp);
         }
         catch(RestClientException e){
             log.error("Errore retrieving past weather: {}", e.getMessage());

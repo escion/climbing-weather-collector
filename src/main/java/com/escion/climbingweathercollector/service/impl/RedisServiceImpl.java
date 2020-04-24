@@ -1,6 +1,6 @@
 package com.escion.climbingweathercollector.service.impl;
 
-import com.escion.climbingweathercollector.model.cache.WeatherCondition;
+import com.escion.climbingweathercollector.model.cache.WeatherConditionCacheable;
 import com.escion.climbingweathercollector.repositories.WeatherConditionsRepository;
 import com.escion.climbingweathercollector.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +19,12 @@ public class RedisServiceImpl implements CacheService {
     private WeatherConditionsRepository repository;
 
     @Override
-    public void put(WeatherCondition data) {
+    public void put(WeatherConditionCacheable data) {
         repository.save(data);
     }
 
     @Override
-    public void putIfAbsent(WeatherCondition data) {
+    public void putIfAbsent(WeatherConditionCacheable data) {
         if(!repository.existsById(data.getKey())){
             repository.save(data);
             log.info("Put data with key: {}", data.getKey());
@@ -35,7 +35,7 @@ public class RedisServiceImpl implements CacheService {
     }
 
     @Override
-    public Optional<WeatherCondition> getById(String id) {
+    public Optional<WeatherConditionCacheable> getById(String id) {
         return repository.findById(id);
     }
 

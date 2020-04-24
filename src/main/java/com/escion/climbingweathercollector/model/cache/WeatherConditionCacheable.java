@@ -8,13 +8,13 @@ import java.io.Serializable;
 
 @Data
 @RedisHash("WeatherCondition")
-public class WeatherCondition implements Serializable {
+public class WeatherConditionCacheable implements Serializable {
     @Id
     String key;
     String period;
     Double temperature;
     Double feelsLikeTemperature;
     Double humidity;
-    Integer rainVolume;
-    Integer snowVolume;
+    Double rainVolume;
+    Double snowVolume;
 }

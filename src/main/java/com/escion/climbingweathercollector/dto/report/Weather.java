@@ -13,7 +13,7 @@ public class Weather {
     Double clouds;
     Double windSpeed;
     Double windDirection;
-    Integer rainVolume;
-    Integer snowVolume;
+    Double rainVolume;
+    Double snowVolume;
     String description;
 }

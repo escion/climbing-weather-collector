@@ -43,6 +43,6 @@ class ClimbingWeatherCollectorApplicationTests {
 	@Test
 	public void testGetPastWeatherDataAndStoreInCache(){
 		Position position = new Position(45.63, 9.15);
-		controller.getAndStorePastWeather(position, "1587340800");
+		controller.aggregatePastWeather(position, "1587340800");
 	}
 }

@@ -20,8 +20,8 @@ public abstract class CommonWeather {
     public Double windDeg;
     @JsonProperty("rain")
     @JsonIgnore
-    public Integer rain;
+    public Double rain;
     @JsonProperty("snow")
     @JsonIgnore
-    public Integer snow;
+    public Double snow;
 }
