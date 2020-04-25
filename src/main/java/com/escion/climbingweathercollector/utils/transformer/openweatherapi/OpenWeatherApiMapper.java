@@ -3,11 +3,11 @@ package com.escion.climbingweathercollector.utils.transformer.openweatherapi;
 import com.escion.climbingweathercollector.dto.common.Position;
 import com.escion.climbingweathercollector.dto.openweatherapi.Hourly;
 import com.escion.climbingweathercollector.dto.openweatherapi.Response;
+import com.escion.climbingweathercollector.dto.openweatherapi.Volume;
 import com.escion.climbingweathercollector.dto.report.PastReport;
 import com.escion.climbingweathercollector.dto.report.Weather;
 import com.escion.climbingweathercollector.dto.report.WeatherReport;
-import com.escion.climbingweathercollector.utils.DateTimeUtils;
-import org.apache.commons.collections4.Transformer;
+import com.escion.climbingweathercollector.utils.CommonsUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class OpenWeatherApiMapper {
     private static Weather createWeather(Hourly hourly, String timezone){
         Weather condition = new Weather();
         condition.setTimestamp(hourly.dt);
-        condition.setPeriod(DateTimeUtils.getPeriodOfDay(hourly.dt, timezone));
+        condition.setPeriod(CommonsUtils.getPeriodOfDay(hourly.dt, timezone));
         condition.setTemperature(hourly.temp);
         condition.setFeelsLikeTemperature(hourly.feelsLike);
         condition.setPressure(hourly.pressure);
@@ -40,9 +40,17 @@ public class OpenWeatherApiMapper {
         condition.setClouds(hourly.clouds);
         condition.setWindSpeed(hourly.windSpeed);
         condition.setWindDirection(hourly.windDeg);
-        condition.setRainVolume(hourly.rain);
-        condition.setSnowVolume(hourly.snow);
+        condition.setRainVolume(getVolume(hourly.rain));
+        condition.setSnowVolume(getVolume(hourly.snow));
         condition.setDescription(hourly.weather.get(0).description);
         return condition;
+    }
+
+    private static Double getVolume(Volume value){
+        if(value == null)
+            return 0.0;
+        if(value.lastHour != null)
+            return value.lastHour;
+        return value.lastThreeHours;
     }
 }

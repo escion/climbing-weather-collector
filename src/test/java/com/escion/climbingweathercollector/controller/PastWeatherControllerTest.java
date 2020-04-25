@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(MockitoExtension.class)
 public class PastWeatherControllerTest {
 
@@ -46,11 +48,22 @@ public class PastWeatherControllerTest {
         Optional<WeatherReport> report = readMockData("past_weather.json");
         Mockito.when(service.getPastConditions(Mockito.any(Position.class), Mockito.anyString())).thenReturn(report);
         List<WeatherConditionCacheable> data = controller.aggregatePastWeather(position, timestamp);
-        Assertions.assertTrue(CollectionUtils.size(data) == 4);
-        Assertions.assertTrue(data.stream().filter(w -> w.getPeriod().equals(Period.NIGHT.name())).collect(Collectors.toList()).size() == 1);
-        Assertions.assertTrue(data.stream().filter(w -> w.getPeriod().equals(Period.MORNING.name())).collect(Collectors.toList()).size() == 1);
-        Assertions.assertTrue(data.stream().filter(w -> w.getPeriod().equals(Period.AFTERNOON.name())).collect(Collectors.toList()).size() == 1);
-        Assertions.assertTrue(data.stream().filter(w -> w.getPeriod().equals(Period.EVENING.name())).collect(Collectors.toList()).size() == 1);
+        assertTrue(CollectionUtils.size(data) == 4);
+        assertTrue(data.stream().filter(w -> w.getPeriod().equals(Period.NIGHT.name())).collect(Collectors.toList()).size() == 1);
+        assertTrue(data.stream().filter(w -> w.getPeriod().equals(Period.MORNING.name())).collect(Collectors.toList()).size() == 1);
+        assertTrue(data.stream().filter(w -> w.getPeriod().equals(Period.AFTERNOON.name())).collect(Collectors.toList()).size() == 1);
+        assertTrue(data.stream().filter(w -> w.getPeriod().equals(Period.EVENING.name())).collect(Collectors.toList()).size() == 1);
+    }
+
+    @Test
+    public void testAverageValueOK() throws IOException {
+        Position position = new Position(44.35, 9.15);
+        String timestamp = "1587427200";
+        Optional<WeatherReport> report = readMockData("past_weather.json");
+        Mockito.when(service.getPastConditions(Mockito.any(Position.class), Mockito.anyString())).thenReturn(report);
+        List<WeatherConditionCacheable> data = controller.aggregatePastWeather(position, timestamp);
+        List<WeatherConditionCacheable> cache = data.stream().filter(w -> w.getPeriod().equals(Period.NIGHT.name())).collect(Collectors.toList());
+        Assertions.assertEquals(10.0933333, cache.get(0).getTemperature());
     }
 
     @Test
@@ -60,7 +73,7 @@ public class PastWeatherControllerTest {
         Optional<WeatherReport> report = Optional.empty();
         Mockito.when(service.getPastConditions(Mockito.any(Position.class), Mockito.anyString())).thenReturn(report);
         List<WeatherConditionCacheable> data = controller.aggregatePastWeather(position, timestamp);
-        Assertions.assertTrue(CollectionUtils.isEmpty(data));
+        assertTrue(CollectionUtils.isEmpty(data));
     }
 
     private Optional<WeatherReport> readMockData(String fileName) throws IOException {
