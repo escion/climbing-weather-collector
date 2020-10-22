@@ -5,6 +5,7 @@ import com.escion.climbingweathercollector.dto.report.PastReport;
 import com.escion.climbingweathercollector.dto.report.Weather;
 import com.escion.climbingweathercollector.model.cache.WeatherConditionCacheable;
 import com.escion.climbingweathercollector.service.CacheService;
+import com.escion.climbingweathercollector.service.CragService;
 import com.escion.climbingweathercollector.service.WeatherDataService;
 import com.escion.climbingweathercollector.utils.CommonsUtils;
 import com.escion.climbingweathercollector.utils.transformer.common.WeatherConditionCacheableMapper;
@@ -31,6 +32,9 @@ public class PastWeatherController {
     @Autowired
     @Qualifier("redisService")
     private CacheService cacheService;
+
+    @Autowired
+    private CragService cragService;
 
     public List<WeatherConditionCacheable> aggregatePastWeather(Position position, String timestamp){
         Optional<PastReport> report = (Optional<PastReport>) weatherDataService.getPastConditions(position, timestamp);
